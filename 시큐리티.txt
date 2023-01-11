@@ -1,0 +1,24 @@
+시큐리티
+
+스프링 시큐리티 사용 시 로그인을 authentication filter(로그인 인증 필터)가 가로채 처리함
+아이디는 PrincipalDetailService로 보내 DB아이디와 비교 후 principal객체로 리턴
+패스워드는 DB에 저장되어 있는 번호는 해쉬화되어있기 때문에 입력한 번호도 해쉬화시킨 다음 둘을 비교해 리턴
+
+로그인 인증 필터를 거칠 때 UsernamePasswordAuthenticationToken을 생성하고 그 다음
+AuthenticationManager가 입력한 아이디와 비밀번호를 확인 후 이를 기반으로 
+시큐리티 컨텍스트 내부에 Authentication 객체를 만들고 세션에 저장
+중간 과정을 보면
+아이디를 PrincipalDetailService로 보내 거기서 확인하는데 (PrincipalDetailService는 UserDetailService를 구현한 클래스임)
+입력한 아이디와 DB아이디가 맞으면 principal객체로 AuthenticationManager에 결과를 리턴
+그리고 패스워드를 확인하는데 입력받은 번호를 해쉬화해 DB의 해쉬화된 번호와 비교 후 맞으면
+Authentication 객체를 생성하고 세션에 저장
+
+세션의 시큐리티 컨텍스트에는 Authentication 객체만 저장 가능
+즉, Authentication 객체를 세션에 저장하기위해 생긴 로직
+
+1. 로그인 시 Authentication Filter가 가로채 로그인을 처리함
+2. UsernamePasswordAuthenticationToken을 생성하고 AuthenticationManager에 역할을 넘겨줌
+3. 먼저 아이디를 UserDetailService에 넘겨서 DB상 아이디와 맞는지 확인 후 조회결과를 principal객체로 리턴
+4. 비밀번호는 DB에는 회원가입 때 비밀번호를 해쉬화해 저장했기 때문에 입력받은 번호도 해쉬화해 비교
+5. 아이디와 비밀번호가 맞으면 세션 내부에 시큐리티 컨텍스트에 Authentication 객체를 생성
+6. 이 모든 과정이 6번을 위한 과정 즉, 세션 내부의 시큐리티 컨텍스트 내부에 Authentication 객체를 생성하기 위함
