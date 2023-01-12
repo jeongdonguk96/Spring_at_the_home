@@ -1,0 +1,29 @@
+카카오 로그인 API
+
+1. 사용자가 카카오 로그인 클릭
+2. 카카오 api 서버로 요청, 카카오 로그인 페이지로 이동 
+3. 카카오 로그인 시 카카오 api 서버에서 검증 후 사이트에 임의의 코드와 함께 redirect_url로 callback
+4. 사이트가 다시 카카오 api 서버에 받은 코드와 5가지 정보를 보내면서 카카오 자원서버가 가지고 있는 사용자 정보에 대한 권한 요청
+5. 카카오 api 서버는 정보 확인 후 AccessToken을 사이트에 줌(정보 접근 권한)
+6. 토큰을 받은 사이트는 카카오의 자원서버에 있는 사용자의 정보에 접근 가능
+7. 즉 사용자가 사이트에 자신의 카카오톡에 대한 접근권한을 위임(허용)하는 것
+8. 이때 사용자를 리소스오너, 사이트를 클라이언트, 카카오 api 서버를 인증서버, 카카오 자원서버를 리소스서버라고 함
+9. 스프링의 공식 Oauth서버는 facebook과 google
+10. Oauth2 client 라이브러리가 이걸 편하게 해줌
+
+
+(1) [카카오 로그인 화면 요청]
+1. (get 요청) 카카오 홈페이지에서 요청 주소를 받아 client_id와 redirect_uri를 각각 rest api키, 인가코드를 전달받을 사이트의 url로 기입해서 카카오로그인 실행
+2. (post 요청) 받은 인가코드를 포함해 MIME, grant-type, client_id, redirect_uri 5가지 정보를 json에 담아 토큰발급 요청
+
+1.
+https://kauth.kakao.com/oauth/authorize?client_id=161770d6be4249445e30ee0f4319b293&redirect_uri=http://localhost:8080/auth/kakao/callback&response_type=code
+
+2.
+https://kauth.kakao.com/oauth/token
+MIME= application/x-www-form-urlencoded;charset=utf-8
+grant_type= authorization_code(고정)
+client_id= 161770d6be4249445e30ee0f4319b293
+redirect_uri= http://localhost:8080/auth/kakao/callback
+code= 위의 1의 단계에서 받은 임의의 동적 코드
+client_secret= 필수x
