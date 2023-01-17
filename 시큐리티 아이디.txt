@@ -1,0 +1,9 @@
+시큐리티 로그인 - 아이디
+
+1. http.loginProcessingUrl이 실행되면 아이디 인증은 PrincipalDetailsService로 보내짐
+2. 입력한 아이디와 DB상 아이디를 비교해 맞으면 UserDetails타입의 객체를 리턴함
+3. UserDetails타입의 객체를 리턴하는 이유는
+4. 시큐리티 세션에는 Authentication 객체만 들어가는데
+5. Authentication 객체의 유저정보는 UserDetails타입에 저장
+6. 즉 시큐리티 로그인에서 아이디 인증은 오로지 UserDetails타입만 리턴해야 함
+

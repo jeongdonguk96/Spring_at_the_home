@@ -9,7 +9,7 @@ AuthenticationManager가 입력한 아이디와 비밀번호를 확인 후 이�
 시큐리티 컨텍스트 내부에 Authentication 객체를 만들고 세션에 저장
 중간 과정을 보면
 아이디를 PrincipalDetailService로 보내 거기서 확인하는데 (PrincipalDetailService는 UserDetailService를 구현한 클래스임)
-입력한 아이디와 DB아이디가 맞으면 principal객체로 AuthenticationManager에 결과를 리턴
+입력한 아이디와 DB아이디가 맞으면 UserDetails객체로 AuthenticationManager에 결과를 리턴
 그리고 패스워드를 확인하는데 입력받은 번호를 해쉬화해 DB의 해쉬화된 번호와 비교 후 맞으면
 Authentication 객체를 생성하고 세션에 저장
 
@@ -22,3 +22,15 @@ Authentication 객체를 생성하고 세션에 저장
 4. 비밀번호는 DB에는 회원가입 때 비밀번호를 해쉬화해 저장했기 때문에 입력받은 번호도 해쉬화해 비교
 5. 아이디와 비밀번호가 맞으면 세션 내부에 시큐리티 컨텍스트에 Authentication 객체를 생성
 6. 이 모든 과정이 6번을 위한 과정 즉, 세션 내부의 시큐리티 컨텍스트 내부에 Authentication 객체를 생성하기 위함
+
+시큐리티 세션은 Authentication을 포함하고 Authentication은 UserDetails을 포함한다.
+스프링 세션 안에 시큐리티 세션이 있고
+시큐리티 세션 안에는 Authentication 객체만 들어갈 수 있다.
+시큐리티 세션 안에 Authentication 객체가 있다는 말은 로그인 된 상태라는 말이다.
+Authentication 객체 안에는 UserDetails타입만 들어간다. - 일반 시큐리티 로그인
+하지만 Authentication 객체 안에는 OAuth2User타입도 들어간다. - OAuth2 로그인
+UserDetails타입과 OAuth2User타입은 호환되지 않는다.
+그래서 일반 로그인과 OAuth2 로그인을 구분해서 구현해야 한다.
+이런 번거로움을 해결하는 방법이 있는데
+PrincipalDetails가 UserDetails 인터페이스와 OAuth2User 인터페이스를 다 구현하면 된다.
+
